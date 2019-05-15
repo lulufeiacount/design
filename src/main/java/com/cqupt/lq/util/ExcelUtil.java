@@ -7,10 +7,7 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -89,6 +86,13 @@ public class ExcelUtil {
 		OutputStream out = null;
 		try {
 			Workbook workBook = getWorkbok(finalXlsxPath);
+
+			//设置字体大小
+			CellStyle cellStyle = workBook.createCellStyle();
+			Font font = workBook.createFont();
+			font.setFontName("Arial");
+			cellStyle.setFont(font);
+
 			// sheet 对应一个工作页
 			Sheet sheet = workBook.createSheet(sheetName);
 
@@ -104,12 +108,15 @@ public class ExcelUtil {
 
 				Cell first = row.createCell(0);
 				first.setCellValue(uniProtAcc.getTerm());
+				first.setCellStyle(cellStyle);
 
 				Cell second = row.createCell(1);
 				second.setCellValue(uniProtAcc.getEntry());
+				second.setCellStyle(cellStyle);
 
 				Cell third = row.createCell(2);
 				third.setCellValue(uniProtAcc.getOrganism());
+				third.setCellStyle(cellStyle);
 			}
 			// 创建文件输出流，准备输出电子表格：这个必须有，否则你在sheet上做的任何操作都不会有效
 			out =  new FileOutputStream(finalXlsxPath);
@@ -142,10 +149,14 @@ public class ExcelUtil {
 			ImageIO.write(bufferImg, "jpg", byteArrayOut);
 			FileInputStream in = new FileInputStream(excelFilePath);
 			XSSFWorkbook wb = new XSSFWorkbook(in);
+			XSSFCellStyle cellStyle = wb.createCellStyle();
 			//将读一个表空间隐藏。
 			wb.getSheetAt(0).setSelected(false);
 			Sheet sheet = wb.createSheet(sheetName);
 			sheet.setSelected(true);
+			Font font = wb.createFont();
+			font.setFontName("Arial");
+			cellStyle.setFont(font);
 			//画图的顶级管理器，一个sheet只能获取一个（一定要注意这点）
 			Drawing drawingPatriarch = sheet.createDrawingPatriarch();
 			//anchor主要用于设置图片的属性
@@ -162,8 +173,14 @@ public class ExcelUtil {
 				// 创建一行：从第二行开始，跳过属性列
 				Row row = sheet.createRow(i + 1);
 				String key = iterator.next();
-				row.createCell(0).setCellValue(key);
-				row.createCell(1).setCellValue(dataMap.get(key));
+//				row.createCell(0).setCellValue(key);
+				Cell cell = row.createCell(0);
+				cell.setCellValue(key);
+				cell.setCellStyle(cellStyle);
+//				row.createCell(1).setCellValue(dataMap.get(key));
+				Cell cell1 = row.createCell(1);
+				cell1.setCellValue(dataMap.get(key));
+				cell1.setCellStyle(cellStyle);
 			}
 
 			fileOut = new FileOutputStream(excelFilePath);
@@ -206,11 +223,17 @@ public class ExcelUtil {
 	 * @param titleList 标题集合
 	 * @param dataList 内容集合
 	 */
-	public static void writeSheet3ToExcel(String excelFilePath, String sheetName, List<String> titleList, Set<David> dataList) {
+	public static void writeSheet3ToExcel(String excelFilePath, String sheetName, List<String> titleList, List<David> dataList) {
 		FileOutputStream fileOut = null;
 		try {
 			FileInputStream in = new FileInputStream(excelFilePath);
 			XSSFWorkbook wb = new XSSFWorkbook(in);
+			//数值类型的单元格格式
+			XSSFCellStyle cellStyle = wb.createCellStyle();
+//			cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0"));
+			Font font = wb.createFont();
+			font.setFontName("Arial");
+			cellStyle.setFont(font);
 			//将读一个表空间隐藏。
 			wb.getSheetAt(0).setSelected(false);
 			wb.getSheetAt(1).setSelected(false);
@@ -229,21 +252,28 @@ public class ExcelUtil {
 				setHyperlinks(wb,row,david.getEntry(),david.getUrl(),0);
 
 				Cell first = row.createCell(1);
-				first.setCellValue(david.getHosts());
+				first.setCellValue(new Integer(david.getHosts()));
+				first.setCellStyle(cellStyle);
+
 
 				Cell second = row.createCell(2);
 				second.setCellValue(david.getLabel());
+				second.setCellStyle(cellStyle);
 
 				if (david.getBiocarta() != null) {
 					Cell third = row.createCell(3);
 					third.setCellValue(david.getBiocarta());
+					third.setCellStyle(cellStyle);
 
 					Cell forth = row.createCell(4);
 					forth.setCellValue(david.getKeggPathway());
+					forth.setCellStyle(cellStyle);
 				}
 				i++;
 			}
 			fileOut = new FileOutputStream(excelFilePath);
+			//写完后将第三个sheet进行关闭
+			wb.getSheetAt(2).setSelected(false);
 			// 写入excel文件
 			wb.write(fileOut);
 		} catch (Exception e) {
@@ -269,11 +299,12 @@ public class ExcelUtil {
 		//设置标题样式
 		CellStyle cellStyle = workbook.createCellStyle();
 		//设置背景颜色为蓝色
-		cellStyle.setFillForegroundColor(HSSFColor.YELLOW.index);// 设置前景色
-		cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+//		cellStyle.setFillForegroundColor(HSSFColor.YELLOW.index);// 设置前景色
+//		cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		//设置字体格式
 		Font font = workbook.createFont();
 		font.setBold(true);
+		font.setFontName("Arial");
 		cellStyle.setFont(font);
 		//将第一列冻结
 		sheet.createFreezePane( 0, 1, 0, 1 );
@@ -299,10 +330,11 @@ public class ExcelUtil {
 		CreationHelper createHelper = wb.getCreationHelper();
 
 		if (hlink_style == null) {
-			CellStyle hlink_style = wb.createCellStyle();
+			hlink_style = wb.createCellStyle();
 			Font hlink_font = wb.createFont();
 			hlink_font.setUnderline(Font.U_SINGLE);
 			hlink_font.setColor(IndexedColors.BLUE.getIndex());
+			hlink_font.setFontName("Arial");
 			hlink_style.setFont(hlink_font);
 		}
 

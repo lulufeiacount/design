@@ -1,12 +1,14 @@
 package com.cqupt.lq.po;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
-public class David implements Comparable<David>{
+public class David implements Comparable<David> {
 	private String entry;
 	private String url;
-	private String Hosts;
+	private Integer Hosts;
 	private String Label;
 	private String biocarta;
 	private String keggPathway;
@@ -40,11 +42,11 @@ public class David implements Comparable<David>{
 		this.url = url;
 	}
 
-	public String getHosts() {
+	public Integer getHosts() {
 		return Hosts;
 	}
 
-	public void setHosts(String hosts) {
+	public void setHosts(Integer hosts) {
 		Hosts = hosts;
 	}
 
@@ -81,7 +83,33 @@ public class David implements Comparable<David>{
 	}
 
 	@Override
+	public String toString() {
+		return "David{" +
+				"entry='" + entry + '\'' +
+				", url='" + url + '\'' +
+				", Hosts=" + Hosts +
+				", Label='" + Label + '\'' +
+				", biocarta='" + biocarta + '\'' +
+				", keggPathway='" + keggPathway + '\'' +
+				'}';
+	}
+
+	@Override
 	public int compareTo(David o) {
-		return this.entry.compareTo(o.getEntry());
+		return o.getHosts().compareTo(this.getHosts());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		David david = (David) o;
+		return Objects.equals(entry, david.entry);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(entry);
 	}
 }

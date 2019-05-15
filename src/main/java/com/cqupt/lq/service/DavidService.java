@@ -1,11 +1,9 @@
 package com.cqupt.lq.service;
 
-import com.cqupt.lq.controller.reactImpc;
 import com.cqupt.lq.manager.DavidManager;
 import com.cqupt.lq.po.David;
 import com.cqupt.lq.po.UniProt;
 import david.xsd.AnnotationRecord;
-import david.xsd.ArrayOfString;
 import david.xsd.TableRecord;
 import org.apache.axis2.AxisFault;
 import org.slf4j.Logger;
@@ -43,8 +41,9 @@ public class DavidService implements Service {
 		if (uniProtList != null && uniProtList.size() != 0){
 			for (int i = 0; i < uniProtList.size(); i++) {
 				String[] entry = uniProtList.get(i).getEntry().split(",");
+				logger.debug("开始向David发送第："+count+"个entry。");
 				for (String s : entry) {
-					if (count == 200){
+					if (count == 12000){
 						return 0;
 					}
 					getResultFromDavid(new David(s));

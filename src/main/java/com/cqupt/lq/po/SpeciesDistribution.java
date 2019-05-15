@@ -13,8 +13,8 @@ public class SpeciesDistribution {
 	private  static List<String> filedList = new ArrayList<>();
 
 	static {
-		filedList.add("Term");
 		filedList.add("Organism");
+		filedList.add("Term");
 	}
 
 	public SpeciesDistribution() {

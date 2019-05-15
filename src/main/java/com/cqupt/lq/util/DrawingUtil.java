@@ -6,12 +6,14 @@ import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,7 @@ public class DrawingUtil {
 			pieplot.setSectionPaint(key, Color.decode(colorArr[i]));
 			i++;
 		}
+//		pieplot.setLabelGenerator(new StandardPieSectionLabelGenerator("{2}",new DecimalFormat("0.0"),new DecimalFormat("0.0%")));
 		try {
 			File file = new File(filePath);
 			if (file.exists()) {
@@ -82,7 +85,7 @@ public class DrawingUtil {
 
 		pieplot.setLabelShadowPaint(null);// 标签阴影颜色
 
-		pieplot.setLabelFont(new Font("宋体",Font.BOLD,20));// 设置字体大小
+		pieplot.setLabelFont(new Font("Arial",Font.PLAIN,16));// 设置字体大小
 
 		pieplot.setOutlinePaint(Color.decode("#c4ccd3")); // 设置绘图面板外边的填充颜色
 

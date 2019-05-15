@@ -20,9 +20,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class reactImpc {
+public class ReactImpc {
 
-	private static final Logger logger = LoggerFactory.getLogger(reactImpc.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReactImpc.class);
 
 	private static String ORIGIN_FILE_PATH;
 	private static String AIM_FILE_PATH;
@@ -32,7 +32,7 @@ public class reactImpc {
 	private volatile static boolean isLast = false;
 	private volatile static boolean isWrite = false;
 	private static ScheduledExecutorService scheduledExecutor;
-	private static int i = 1;
+	private volatile static int i = 1;
 
 	static {
 		ServiceFactory serviceFactoryInstance = Client.getServiceFactoryInstance();
@@ -45,11 +45,15 @@ public class reactImpc {
 		if (args != null && args.length >= 2) {
 			getStart(args[0], args[1], args[2]);
 		}
-		getStart("H:\\IDEASpace\\Reactome\\src\\main\\resources\\targets_without_bots(orginal).csv","C:\\Users\\Cockroach\\Documents\\Tencent Files\\903442459\\FileRecv\\reactomeannotationdashboard\\ReactomeAnnotationDashboard\\data\\nrd.2018.14-s3.xlsx", "C:\\Users\\Cockroach\\Desktop\\report_lite.xlsx");
+		getStart("H:\\IDEASpace\\Reactome\\src\\main\\resources\\targets_without_bots(orginal).csv","C:\\Users\\Cockroach\\Documents\\Tencent Files\\903442459\\FileRecv\\reactomeannotationdashboard\\ReactomeAnnotationDashboard\\data\\nrd.2018.14-s3.xlsx", "C:\\Users\\Cockroach\\Desktop\\report_lite1.xlsx");
+//		getStart("C:\\Users\\Cockroach\\Desktop\\reactome_year_report_20180418.txt","C:\\Users\\Cockroach\\Documents\\Tencent Files\\903442459\\FileRecv\\reactomeannotationdashboard\\ReactomeAnnotationDashboard\\data\\nrd.2018.14-s3.xlsx", "C:\\Users\\Cockroach\\Desktop\\report_lite.xlsx");
+//		getStart("/home/stu/liqiang/reactome_year_report_20180418.txt","/home/stu/liqiang/nrd.2018.14-s3.xlsx", "/home/stu/liqiang/report_lite.xlsx");
 	}
 
 	/**
+	 *
 	 * @param originFilePath 原始文件路径
+	 * @param originNrdFilePath Nrd模板路径
 	 * @param aimFilePath 输出文件路径
 	 */
 	public static void getStart(String originFilePath,String originNrdFilePath, String aimFilePath){
@@ -76,7 +80,7 @@ public class reactImpc {
 					DrawingUtil.drawingPic(UniProtAccManager.getUniProtAccManager().getUniProtAccList(), PIC_FILE_PATH);
 					ExcelUtil.insertPicToExcelAndData(PIC_FILE_PATH, AIM_FILE_PATH, "Species Distribution", SpeciesDistribution.getFiledList(), SpeciesDistribution.getDataMap());
 
-					ExcelUtil.writeSheet3ToExcel(AIM_FILE_PATH, "Unique_Entry", David.getFiledList(), DavidManager.getDavidManager().getDavidSet());
+					ExcelUtil.writeSheet3ToExcel(AIM_FILE_PATH, "Unique_Entry", David.getFiledList(), DavidManager.getDavidManager().getSortedDavidList());
 					isWrite = true;
 					return;
 				}
@@ -119,7 +123,7 @@ public class reactImpc {
 			}
 			for (UniProt uniProt : uniProts) {
 				if (david.getEntry().equals(uniProt.getEntry())) {
-					david.setHosts(uniProt.getUniqueUsers());
+					david.setHosts(Integer.parseInt(uniProt.getUniqueUsers()));
 					break;
 				}
 			}
@@ -190,7 +194,7 @@ public class reactImpc {
 	private static class CheckIsFileLast implements Runnable {
 		@Override
 		public void run() {
-			if (ReactomeManager.getReactomeManager().getReactomeList().size() - 1 == i) {
+			if (ReactomeManager.getReactomeManager().getReactomeList().size() - 1 <= i) {
 				isLast = true;
 				logger.debug("已经检测到达底部");
 			}

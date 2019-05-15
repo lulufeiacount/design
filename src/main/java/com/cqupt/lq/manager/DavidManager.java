@@ -2,8 +2,7 @@ package com.cqupt.lq.manager;
 
 import com.cqupt.lq.po.David;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class DavidManager {
 	private static DavidManager davidManager = new DavidManager();
@@ -19,5 +18,11 @@ public class DavidManager {
 
 	private DavidManager(){
 		davidSet = new HashSet<>();
+	}
+
+	public List<David> getSortedDavidList(){
+		List<David> davidList = new ArrayList<>(davidSet);
+		Collections.sort(davidList);
+		return davidList;
 	}
 }
